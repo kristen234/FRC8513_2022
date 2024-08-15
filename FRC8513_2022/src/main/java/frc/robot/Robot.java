@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -21,26 +22,17 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
  * directory.
  */
 public class Robot extends TimedRobot {
-  public DifferentialDrive m_myRobot;
-  public Joystick joystick;
+  public XboxController joystick;
   // initializing motors
   public static final int leftMotorID1 = 4;
   public static final int leftMotorID2 = 5;
   public static final int rightMotorID1 = 2;
   public static final int rightMotorID2 = 3;
-  public static final int lowerIntakeID = 9;
-  public static final int upperIntakeID = 6;
-  public static final int flywheelMotorID = 8;
-  public static final int climberMotorID = 7;
   // initializing Can Sparks to
   public CANSparkMax m_leftMotor1;
   public CANSparkMax m_leftMotor2;
   public CANSparkMax m_rightMotor1;
   public CANSparkMax m_rightMotor2;
-  public CANSparkMax m_lowerIntakeMotor;
-  public CANSparkMax m_upperIntakeMotor;
-  public CANSparkMax m_flywheelMotor;
-  public CANSparkMax m_climberMotor;
   // variables used in the Auto class
   public final Timer m_timer = new Timer();
   // turn PID variables
@@ -59,23 +51,10 @@ public class Robot extends TimedRobot {
     m_leftMotor2 = new CANSparkMax(leftMotorID2, MotorType.kBrushed);
     m_rightMotor1 = new CANSparkMax(rightMotorID1, MotorType.kBrushed);
     m_rightMotor2 = new CANSparkMax(rightMotorID2, MotorType.kBrushed);
-    m_lowerIntakeMotor = new CANSparkMax(lowerIntakeID, MotorType.kBrushed);
-    m_upperIntakeMotor = new CANSparkMax(upperIntakeID, MotorType.kBrushed);
-    m_flywheelMotor = new CANSparkMax(flywheelMotorID, MotorType.kBrushed);
-    m_climberMotor = new CANSparkMax(climberMotorID, MotorType.kBrushed);
     
-    m_rightMotor1.restoreFactoryDefaults();
-    
-    m_rightMotor2.restoreFactoryDefaults();
-    
-    m_leftMotor1.restoreFactoryDefaults();
-    
-    m_leftMotor2.restoreFactoryDefaults();
-    m_rightMotor1.setInverted(true);
-    m_rightMotor2.follow(m_rightMotor1);
-    m_leftMotor2.follow(m_leftMotor1);
-    m_myRobot = new DifferentialDrive(m_leftMotor1, m_rightMotor1);
-    joystick = new Joystick(0);
+    initMotors();
+
+    joystick = new XboxController(0);
   }
 
   @Override
@@ -103,27 +82,19 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during teleoperated mode. */
   @Override
   public void teleopPeriodic() {
-    m_myRobot.arcadeDrive(0.6*joystick.getRawAxis(1),0.6* joystick.getRawAxis(2));
-    boolean stop = true;
-    if(joystick.getRawButton(5)){
-      m_lowerIntakeMotor.set(0.6);
-      m_upperIntakeMotor.set(0.6);
-      m_flywheelMotor.set(0);
-      stop = false;
-    }
+    if(joystick.getAButton()){
+      m_leftMotor1.set(0.25);
+      m_leftMotor2.set(0.25);
 
-    if(joystick.getRawButton(6)){
-      m_lowerIntakeMotor.set(0.6);
-      m_upperIntakeMotor.set(0.8);
-      m_flywheelMotor.set(-1);
-      stop = false;
-    } 
-    if(stop){
-              m_lowerIntakeMotor.set(0);
-      m_upperIntakeMotor.set(0);
-      m_flywheelMotor.set(0);
+      m_rightMotor1.set(0.25);
+      m_rightMotor2.set(0.25);
+    } else {
+      m_leftMotor1.set(0);
+      m_leftMotor2.set(0);
+
+      m_rightMotor1.set(0);
+      m_rightMotor2.set(0);
     }
-  
   }
 
   /** This function is called once each time the robot enters test mode. */
@@ -134,6 +105,16 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
+  }
+
+  private void initMotors(){
+        m_rightMotor1.restoreFactoryDefaults();
+    m_rightMotor2.restoreFactoryDefaults();
+    m_leftMotor1.restoreFactoryDefaults();
+    m_leftMotor2.restoreFactoryDefaults();
+    m_rightMotor1.setInverted(true);
+    m_rightMotor2.follow(m_rightMotor1);
+    m_leftMotor2.follow(m_leftMotor1);
   }
 
 }
