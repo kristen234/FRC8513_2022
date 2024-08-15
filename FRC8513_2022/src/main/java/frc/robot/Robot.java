@@ -64,11 +64,17 @@ public class Robot extends TimedRobot {
     m_flywheelMotor = new CANSparkMax(flywheelMotorID, MotorType.kBrushed);
     m_climberMotor = new CANSparkMax(climberMotorID, MotorType.kBrushed);
     
-    m_rightMotor1.follow(m_rightMotor2);
-    m_leftMotor1.follow(m_leftMotor2);
+    m_rightMotor1.restoreFactoryDefaults();
     
+    m_rightMotor2.restoreFactoryDefaults();
     
-    m_myRobot = new DifferentialDrive(m_leftMotor2, m_rightMotor2);
+    m_leftMotor1.restoreFactoryDefaults();
+    
+    m_leftMotor2.restoreFactoryDefaults();
+    m_rightMotor1.setInverted(true);
+    m_rightMotor2.follow(m_rightMotor1);
+    m_leftMotor2.follow(m_leftMotor1);
+    m_myRobot = new DifferentialDrive(m_leftMotor1, m_rightMotor1);
     joystick = new Joystick(0);
   }
 
